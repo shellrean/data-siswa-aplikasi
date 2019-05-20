@@ -1,0 +1,16 @@
+/** 
+| * NAMA print.css
+| * YEAR 2019
+| * AUTHOR kuswandi
+|
+|
+**/
+.text-center {
+  text-align: center;
+}
+.mt-2 {
+  margin-top: 20px;
+}
+.table-padd-1 tr td{
+  padding: 5px 0;
+}
