@@ -7,12 +7,12 @@ class Kelas extends CI_Controller
   /**
    * Construct parrent controller and
    *
-   * 
+   *
    */
   public function __construct()
   {
     parent::__construct();
-    
+
     is_login();
 
     $this->load->model('M_kelas');
@@ -22,8 +22,8 @@ class Kelas extends CI_Controller
 
   /**
    * Show all database kelas and create datatable
-   * 
-   * 
+   *
+   *
    * @return view
    */
   public function index()
@@ -33,15 +33,15 @@ class Kelas extends CI_Controller
 
       'ajaran'    => get_ta(),
       'kelases'   => $this->M_kelas->getAllKelas(),
-    
+
     ];
     $this->template->load('template','kelas/index',$data);
-  
+
   }
 
   /**
    * Create  klasses
-   * 
+   *
    * @return boolean
    */
   public function create()
@@ -82,7 +82,7 @@ class Kelas extends CI_Controller
 
   /**
    * Edit kelas by id query from url
-   * 
+   *
    * @param id_kelas
    */
   public function edit($slug_kelas)
@@ -93,7 +93,7 @@ class Kelas extends CI_Controller
     $this->form_validation->set_rules('jurusan','Jurusan','required|trim');
     $this->form_validation->set_rules('tingkat','Tingkat','required|in_list[10,11,12]|trim');
 
-    if($this->form_validation->run() == false) 
+    if($this->form_validation->run() == false)
     {
 
       $data = [
@@ -119,13 +119,13 @@ class Kelas extends CI_Controller
       helper_log("update", "Mengubah data kelas");
       alertsuccess('message','Data berhasil diubah');
       redirect('kelas');
-    
+
     }
   }
   /**
-   * Generate anggota kelas 
-   * 
-   *  
+   * Generate anggota kelas
+   *
+   *
    * @param bool
    */
   public function anggota($slug)
@@ -156,8 +156,8 @@ class Kelas extends CI_Controller
 
   /**
    * Save anggota rombel ajax request
-   * 
-   * 
+   *
+   *
    * @return json
    */
   public function simpan_anggota()
@@ -167,16 +167,16 @@ class Kelas extends CI_Controller
 
     # get tahun ajaran now
     $ajaran = get_ta();
-    
+
     # select array condition
     $find = $this->db->get_where('anggota_kelas',[
 
-      'ajaran_id' => $ajaran->id, 
+      'ajaran_id' => $ajaran->id,
       'id_kelas'  => $kelas_id,
       'nis'       => $siswa_nis
 
     ])->num_rows();
-    
+
     if($find){
 
       # update kelas_id in selected selected
@@ -186,42 +186,42 @@ class Kelas extends CI_Controller
         'type'    => 'warning',
         'text'    => 'Berhasil mengubah anggota kelas',
         'title'   => 'Data tersimpan!',
-      
+
       ];
 
-    } 
+    }
     else {
 
       # update kelas_id in selected siswa
       $this->db->update('siswa',['kelas_id' => $kelas_id], ['nis' => $siswa_nis]);
-      
+
       $data = [
-      
+
         'ajaran_id' => $ajaran->id,
         'id_kelas'  => $kelas_id,
         'nis'       => $siswa_nis,
-      
+
       ];
 
       # insert $data to anggota_kelas table
       $this->db->insert('anggota_kelas',$data);
-      
+
       $status = [
-        
+
         'type'    => 'success',
         'text'    => 'Berhasil menambah anggota rombel',
         'title'   => 'Data Tersimpan!',
-      
+
       ];
     }
-    
+
     # return with json code encode
 		echo json_encode($status);
   }
   /**
    * Save anggota rombel ajax request
-   * 
-   * 
+   *
+   *
    * @return json
    */
   public function hapus_anggota()
@@ -231,11 +231,11 @@ class Kelas extends CI_Controller
 
     # get tahun ajaran now
     $ajaran = get_ta();
-    
+
     # select array condition
     $find = $this->db->get_where('anggota_kelas',[
 
-      'ajaran_id' => $ajaran->id, 
+      'ajaran_id' => $ajaran->id,
       'id_kelas'  => $kelas_id,
       'nis'       => $siswa_nis
 
@@ -247,12 +247,12 @@ class Kelas extends CI_Controller
 
       $this->db->delete('anggota_kelas',[
 
-        'ajaran_id' => $ajaran->id, 
+        'ajaran_id' => $ajaran->id,
         'id_kelas' => $kelas_id,
         'nis' => $siswa_nis
 
       ]);
-      
+
       $status = [
         'type'    => 'error',
         'text'    => 'Berhasil menghapus anggota kelas',
@@ -273,8 +273,8 @@ class Kelas extends CI_Controller
 
   /**
    * Atur mata pelajaran
-   * 
-   * 
+   *
+   *
    * @return view
    */
   public function mapel($slug_kelas)
@@ -289,55 +289,55 @@ class Kelas extends CI_Controller
       'data_kelas'  => $this->db->get_where('kelas',['slug' => $slug_kelas])->row(),
 
     ];
-    
+
     $this->template->load('template','kelas/mapel',$data);
   }
 
   /**
    * Save mapel in sended form
-   * 
-   * 
+   *
+   *
    * @return json
    */
   public function simpan_pembelajaran()
   {
 
     $ajaran = get_ta();
-    
+
 		$query      = $this->input->post('query',true);
 		$rombel_id  = $this->input->post('rombel_id',true);
     $mapel_id   = $this->input->post('mapel_id',true);
-    
+
     # get with where condition
     $data_mapel = $this->db->get_where('data_mapel',['id_mapel' => $mapel_id])->row();
 
 		$guru_id      = isset($_POST['guru_id']) ? $_POST['guru_id'] : '0';
     $keahlian_id  = isset($_POST['keahlian_id']) ? $_POST['keahlian_id'] : '';
-    
+
 		$data_kurikulum = array(
 
 			'ajaran_id'			=> $ajaran->id,
 			'kelas_id'			=> $rombel_id,
 			'id_mapel'			=> $mapel_id,
 			'guru_id'			  => $guru_id,
-      'keahlian_id'		=> $keahlian_id
-      
+            'keahlian_id'		=> $keahlian_id
+
     );
-    
+
 		$data_kurikulum_update = array(
 
 			'id_mapel'    => $mapel_id,
 			'guru_id'     => $guru_id,
       'keahlian_id' => $keahlian_id
-      
+
     );
-    
+
 		if($query == 'kurikulum'){
 
       $find = $this->db->get_where('kurikulum',[
 
-        'ajaran_id' => $ajaran->id, 
-        'kelas_id'  => $rombel_id, 
+        'ajaran_id' => $ajaran->id,
+        'kelas_id'  => $rombel_id,
         'id_mapel'  => $mapel_id
 
       ])->row();
@@ -347,26 +347,26 @@ class Kelas extends CI_Controller
 				if($find->guru_id == 0){
 
           $this->db->delete('kurikulum',[
-          
-            'ajaran_id' => $ajaran->id, 
-            'kelas_id'  => $rombel_id, 
+
+            'ajaran_id' => $ajaran->id,
+            'kelas_id'  => $rombel_id,
             'id_mapel'  => $mapel_id
-          
+
             ]);
-        
+
         } else {
-          
+
           $this->db->where([
 
-            'ajaran_id' => $ajaran->id, 
-            'kelas_id' => $rombel_id, 
+            'ajaran_id' => $ajaran->id,
+            'kelas_id' => $rombel_id,
             'id_mapel' => $mapel_id
-            
+
           ]);
           $this->db->update('kurikulum',$data_kurikulum_update);
-          
+
 				}
-				
+
         $status = [
 
           'type'   => 'warning',
@@ -374,15 +374,15 @@ class Kelas extends CI_Controller
           'title'  => 'Data Tersimpan!',
 
         ];
-        
+
 			} else {
 
 				if($guru_id !=0){
-          
+
           $this->db->insert('kurikulum',$data_kurikulum);
-          
+
           $status = [
-            
+
             'icon'  => 'fas fa-check',
             'type'  => 'success',
             'text'  => 'Berhasil menambah pembelajaran',
@@ -393,16 +393,16 @@ class Kelas extends CI_Controller
 				} else {
 
           $nama_mapel = isset($data_mapel->nama_mapel) ? $data_mapel->nama_mapel : $mapel_id;
-          
+
           $status = [
-            
+
             'icon'  => 'fas fa-times',
             'type'  => 'info',
             'text'  => 'Guru tidak dipilih untuk mata pelajaran '.$nama_mapel,
             'title' => 'Data dilewati!',
-            
+
           ];
-          
+
 				}
 			}
     }
@@ -410,15 +410,15 @@ class Kelas extends CI_Controller
 		echo json_encode($status);
 	}
   /**
-   * Kenaikan kelas 
-   * 
-   * 
+   * Kenaikan kelas
+   *
+   *
    * @return
    */
   public function kenaikan($id)
   {
     $find = $this->db->get_where('kelas',['id' => $id])->row();
- 
+
     $data = [
 
       'anggota'     => $this->db->get_where('anggota_kelas',[
@@ -431,12 +431,12 @@ class Kelas extends CI_Controller
       'find'        => $find,
       'data_kelas'  => $this->db->get_where('kelas',[
 
-        'tingkat'   => $find->tingkat+1, 
+        'tingkat'   => $find->tingkat+1,
         'jurusan_id'=> $find->jurusan_id
 
       ])->result(),
-      'ajaran'      => get_ta(), 
-    
+      'ajaran'      => get_ta(),
+
     ];
 
     $this->template->load('template','kelas/kenaikan',$data);
@@ -444,36 +444,36 @@ class Kelas extends CI_Controller
   /**
    * Proses kenaikan
    *
-   *  
+   *
    * @method post
    */
   public function proses_kenaikan()
   {
 
-    $id_kelas   = $this->input->post('id_kelas',true); 
+    $id_kelas   = $this->input->post('id_kelas',true);
     $nis_siswa  = $this->input->post('nis_siswa',true);
-    
+
 
     $kelas = $this->db->get_where('kelas',['id' => $id_kelas])->row();
-    
+
     $this->db->where_in('nis', $nis_siswa);
     $siswa = $this->db->get('siswa')->result();
-    
+
     if($id_kelas == 'lulus'){
 
       $this->db->where_in('nis', $nis_siswa);
       $siswa = $this->db->get('siswa')->result();
-      
+
 			if(is_array($siswa)){
 				foreach($siswa as $s){
           $this->db->where('nis',$s->nis);
           $this->db->update('siswa',['active' => 0]);
-          
+
           $db2 = $this->load->database('database_kedua', TRUE);
 
           $db2->where('nis',$s->nis);
           $db2->update('siswa',['active' => 0]);
-          
+
         }
       }
       return true;
@@ -491,15 +491,15 @@ class Kelas extends CI_Controller
         ];
         $this->db->insert('anggota_kelas',$attr);
 			}
-    } 
-    
+    }
+
     helper_log("update", "Menaikkan data kelas");
     alertsuccess('message','Proses kenaikan kelas berhasil');
   }
   /**
    * Proses lanjut semester
-   * 
-   * 
+   *
+   *
    */
   public function lanjut($id_kelas)
   {
@@ -509,22 +509,22 @@ class Kelas extends CI_Controller
     $data['find'] = $find;
     $data['ajaran'] = $ajaran;
     $this->template->load('template','kelas/lanjut',$data);
-  }  
+  }
 
   /**
    * Proses lanjut semester
-   * 
-   * 
-   * 
+   *
+   *
+   *
    */
   public function proses_lanjut()
   {
     $ajaran = get_ta_smt();
 
-    $id_kelas = $this->input->post('id_kelas',true); 
-    
+    $id_kelas = $this->input->post('id_kelas',true);
+
     $kelas = $this->db->get_where('kelas',['id' => $id_kelas])->row();
-    
+
     $nis_siswa = $this->input->post('nis_siswa',true);
 
     $this->db->where_in('nis', $nis_siswa);
@@ -542,14 +542,14 @@ class Kelas extends CI_Controller
         ];
         $this->db->insert('anggota_kelas',$attr);
 			}
-    } 
-    
+    }
+
     helper_log("update", "Melanjutkan semester data kelas");
     alertsuccess('message','Proses lanjut semester kelas berhasil');
   }
   /**
    * Hapus Kelas by slug integreted by id
-   * 
+   *
    * @param slug
    */
   public function delete($slug_kelas)

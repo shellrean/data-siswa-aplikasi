@@ -6,8 +6,8 @@ class Siswa extends CI_Controller
 
   /**
    * Construct class all loaded
-   * 
-   *  
+   *
+   *
    */
   public function __construct()
   {
@@ -18,8 +18,8 @@ class Siswa extends CI_Controller
   }
   /**
    * Show siswa dashboard
-   * 
-   * 
+   *
+   *
    * @return view
    */
   public function index()
@@ -31,8 +31,8 @@ class Siswa extends CI_Controller
 
   /**
    * Delete data siswa from with id_siswa
-   * 
-   * 
+   *
+   *
    * @return boolean
    */
   public function delete($id)
@@ -45,8 +45,8 @@ class Siswa extends CI_Controller
 
   /**
    * Show detail data siswa with id_siswa
-   * 
-   * 
+   *
+   *
    * @return view
    */
   public function detail($id)
@@ -56,8 +56,8 @@ class Siswa extends CI_Controller
   }
   /**
    * Edit data siswa with id_siswa
-   * 
-   * 
+   *
+   *
    * @return view
    */
   public function edit($id)
@@ -120,9 +120,9 @@ class Siswa extends CI_Controller
     }
   }
   /**
-   * Create data siswa 
-   * 
-   * 
+   * Create data siswa
+   *
+   *
    * @return view
    */
   public function create()
@@ -183,8 +183,8 @@ class Siswa extends CI_Controller
   }
   /**
    * Upload data siswa from xsls to database
-   * 
-   * 
+   *
+   *
    * @return bool
    */
   public function upload()
@@ -193,8 +193,8 @@ class Siswa extends CI_Controller
   }
   /**
    * Upload foto siswa
-   * 
-   * 
+   *
+   *
    */
   public function upload_foto()
   {
@@ -214,27 +214,27 @@ class Siswa extends CI_Controller
   }
     /**
    * Import from excel execute
-   * 
-   * 
+   *
+   *
    * @return boolean
    */
   public function import()
   {
     is_admin();
-    
+
     $nama_file = $this->M_siswa->upload_file();
     /* Load plugin PHPExcel */
     include APPPATH.'third_party/PHPExcel.php';
-    
+
     $excelreader = new PHPExcel_Reader_Excel2007();
-    $loadexcel = $excelreader->load('uploads/file_uploaded/'.$nama_file.'.xlsx'); 
+    $loadexcel = $excelreader->load('uploads/file_uploaded/'.$nama_file.'.xlsx');
     $sheet = $loadexcel->getActiveSheet()->toArray(null, true, true ,true);
-     
+
     $data = array();
-    
-    $numrow = 1; 
+
+    $numrow = 1;
     foreach($sheet as $row){
-      
+
     if(empty($row['A']) && empty($row['B']) && empty($row['C']) &&empty($row['D']) && empty($row['E']))
     continue;
     /* ----------------------------------------------
@@ -273,7 +273,7 @@ class Siswa extends CI_Controller
           'pekerjaan_wali'    => $row['X'],
         ));
     }
-    
+
     $numrow++;
     }
 
@@ -287,9 +287,9 @@ class Siswa extends CI_Controller
 
   /**
    * Cetak data siswa generate by id_siswa
-   * 
-   * 
-   * @return view 
+   *
+   *
+   * @return view
    */
   public function cetak($id_siswa)
   {
@@ -300,21 +300,21 @@ class Siswa extends CI_Controller
 
     $mpdf->WriteHTML($html);
     $mpdf->SetCreator('Kuswandi');
-    $mpdf->Output($data['kelas'] . $data['siswa']->nama_siswa.'.pdf','I'); 
+    $mpdf->Output($data['kelas'] . $data['siswa']->nama_siswa.'.pdf','I');
   }
 
   /**
-   * Download seluruh data siswa 
+   * Download seluruh data siswa
    *
-   * 
-   *  
+   *
+   *
    * @return excels
    */
   public function excel()
   {
     $siswa = $this->db->get('siswa')->result();
     include APPPATH.'third_party/PHPExcel.php';
-    
+
     // Panggil class PHPExcel nya
     $excel = new PHPExcel();
     // Settingan awal fil excel
@@ -324,7 +324,7 @@ class Siswa extends CI_Controller
                  ->setSubject("Data siswa")
                  ->setDescription("Seluruh data siswa")
                  ->setKeywords("Data siswa");
-                 
+
     $style_col = array(
       'font' => array('bold' => true), // Set font nya jadi bold
       'alignment' => array(
@@ -356,8 +356,8 @@ class Siswa extends CI_Controller
     $excel->getActiveSheet()->getStyle('A1')->getFont()->setSize(15); // Set font size 15 untuk kolom A1
     $excel->getActiveSheet()->getStyle('A1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER); // Set text center untuk kolom A1
     $excel->getActiveSheet()->getStyle('A1')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER); // Set text center untuk kolom A1
-    
-    
+
+
     // Buat header tabel nya pada baris ke 3
     $excel->setActiveSheetIndex(0)->setCellValue('A9', "NO");
     $excel->setActiveSheetIndex(0)->setCellValue('B9','NISN');
@@ -440,7 +440,7 @@ class Siswa extends CI_Controller
       $excel->setActiveSheetIndex(0)->setCellValue('W'.$numrow, $data->alamat_wali);
       $excel->setActiveSheetIndex(0)->setCellValue('X'.$numrow, $data->telp_wali);
       $excel->setActiveSheetIndex(0)->setCellValue('Y'.$numrow, $data->pekerjaan_wali);
-      
+
       // Apply style row yang telah kita buat tadi ke masing-masing baris (isi tabel)
       $excel->getActiveSheet()->getStyle('A'.$numrow)->applyFromArray($style_row);
       $excel->getActiveSheet()->getStyle('B'.$numrow)->applyFromArray($style_row);
@@ -472,7 +472,7 @@ class Siswa extends CI_Controller
       $excel->getActiveSheet()->getStyle('C'.$numrow)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
       $excel->getActiveSheet()->getStyle('E'.$numrow)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
       $excel->getActiveSheet()->calculateColumnWidths();
-      
+
       $no++; // Tambah 1 setiap kali looping
       $numrow++; // Tambah 1 setiap kali looping
     }
@@ -502,18 +502,15 @@ class Siswa extends CI_Controller
     $excel->getActiveSheet()->getColumnDimension('W')->setWidth(30); // Set width kolom C
     $excel->getActiveSheet()->getColumnDimension('X')->setWidth(30); // Set width kolom C
     $excel->getActiveSheet()->getColumnDimension('Y')->setWidth(30); // Set width kolom C
-    
+
     // Set height semua kolom menjadi auto (mengikuti height isi dari kolommnya, jadi otomatis)
     $excel->getActiveSheet()->getDefaultRowDimension()->setRowHeight(-1);
     // Set orientasi kertas jadi LANDSCAPE
     $excel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
-    
+
     // Set judul file excel nya
     $excel->getActiveSheet(0)->setTitle("Data siswa");
     $excel->setActiveSheetIndex(0);
-    // Proses file excel
-    // $nama_kelas = $data['kelas'];
-    // $nama_mapel = $data['nama_mapel'];
 
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     header('Content-Disposition: attachment; filename="Data siswa smkn 43 jakarta.xlsx"'); // Set nama file excel nya
@@ -521,5 +518,43 @@ class Siswa extends CI_Controller
     $write = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
     $write->save('php://output');
   }
+  /**
+   * For sync dinasti siswa
+   */
+   public function siswa_sync($key)
+   {
+       $this->_check_key($key);
+       $result = $this->db->get_where('siswa',[
+           'is_active'          => 0
+       ])->result();
 
+       echo json_encode($result)
+   }
+   /**
+    * For sync dinasti
+    * @param object $ta
+    * @param string $key
+    */
+    public function anggota_kelas_sync($key,$ta)
+    {
+        $this->_check_key($key);
+        $result = $this->db->get_where('anggota_kelas',[
+            'tahun_ajaran'      => $ta->tahun
+        ])->result();
+
+        echo json_encode($result);
+    }
+
+    private function _check_key($key)
+    {
+
+        $data = $this->db->get_where('api_key',[
+            'key'       => $key
+        ])->num_rows();
+
+        if($data) {
+            ec
+        }
+
+    }
 }
